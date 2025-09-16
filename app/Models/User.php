@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -21,6 +23,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'photo'
     ];
 
     /**
@@ -44,5 +48,32 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    
+    public function tickets(): HasMany
+    {
+        return $this->hasMany(Ticket::class, 'user_id');
+    }
+    public function assignedTickets(): HasMany
+    {
+        return $this->hasMany(Ticket::class, 'assigned_to');
+    }
+    public function ticketResponses(): HasMany
+    {
+        return $this->hasMany(TicketResponse::class);
+    }
+    public function ticketFeedbacks(): HasMany
+    {
+        return $this->hasMany(TicketFeedback::class);
+    }
+    
+    public function escalationsMade()
+    {
+        return $this->hasMany(TicketEscalation::class,  'escalated_by');
+    }
+
+    public function escalationsReceived()
+    {
+        return $this->hasMany(TicketEscalation::class,  'escalated_to');
     }
 }
