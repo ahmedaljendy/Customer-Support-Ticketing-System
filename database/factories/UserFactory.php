@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -23,13 +24,17 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $photos = collect(Storage::files('public/users'));
+        
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             // 'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'role' => fake()->randomElement(['customer', 'agent', 'admin']),
-            'photo' => fake()->imageUrl(200,200,'people',true,null,false,'png')
+            'photo' => $photos->isNotEmpty()
+            ? Storage::url($photos->random()) 
+            : null,
             // 'remember_token' => Str::random(10),
         ];
     }
