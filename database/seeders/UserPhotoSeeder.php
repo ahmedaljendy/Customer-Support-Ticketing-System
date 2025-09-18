@@ -32,9 +32,7 @@ class UserPhotoSeeder extends Seeder
         
         foreach ($urls as $index => $url) {
             $fileName = "user{$index}.jpg";
-            $filePath = "public/users/{$fileName}";
 
-            // Download and store photo
             $response = Http::get($url);
 
             if ($response->successful()) {
